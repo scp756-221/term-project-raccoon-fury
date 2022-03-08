@@ -39,21 +39,6 @@ db = {
     ]
 }
 
-# helper to retrieve song
-
-
-def get_song(headers, music_id):
-    payload = {"objtype": "music", "objkey": music_id}
-    url = db['name'] + '/' + db['endpoint'][0]
-    response = requests.get(
-        url,
-        params=payload,
-        headers={'Authorization': headers['Authorization']})
-    if response.json()['Count'] == 0:
-        return Response(json.dumps({"error": "get_song failed"}),
-                        status=500,
-                        mimetype='application/json')
-
 
 @bp.route('/', methods=['GET'])
 @metrics.do_not_track()
@@ -98,16 +83,24 @@ def create_playlist():
     headers = request.headers
     try:
         content = request.get_json()
-        name = content['name']
-        songs = content['songs'].strip().split(",")
+        Name = content['name']
+        Songs = content['songs'].strip().split(",")
     except Exception:
         return json.dumps({"message": "error reading arguments"})
 
-    for music_id in songs:
-        # TODO: read songs
-        get_song(headers, music_id)
+    for music_id in Songs:
+        payload = {"objtype": "music", "objkey": music_id}
+        url = db['name'] + '/' + db['endpoint'][0]
+        response = requests.get(
+            url,
+            params=payload,
+            headers={'Authorization': headers['Authorization']})
+        if response.json()['Count'] == 0:
+            return Response(json.dumps({"error": "get_song failed"}),
+                            status=500,
+                            mimetype='application/json')
 
-    payload = {"objtype": "playlist", "songs": songs}
+    payload = {"objtype": "playlist", "Name": Name, "Songs": Songs}
     url = db['name'] + '/' + db['endpoint'][1]
     response = requests.post(
         url,
