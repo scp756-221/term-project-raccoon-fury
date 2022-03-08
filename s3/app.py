@@ -39,6 +39,21 @@ db = {
     ]
 }
 
+# helper to retrieve song
+
+
+def get_song(headers, music_id):
+    payload = {"objtype": "music", "objkey": music_id}
+    url = db['name'] + '/' + db['endpoint'][0]
+    response = requests.get(
+        url,
+        params=payload,
+        headers={'Authorization': headers['Authorization']})
+    if response.json()['Count'] == 0:
+        return Response(json.dumps({"error": "get_song failed"}),
+                        status=500,
+                        mimetype='application/json')
+
 
 @bp.route('/', methods=['GET'])
 @metrics.do_not_track()
@@ -58,28 +73,6 @@ def health():
 @metrics.do_not_track()
 def readiness():
     return Response("", status=200, mimetype="application/json")
-
-
-@bp.route('/<user_id>', methods=['PUT'])
-def update_user(user_id):
-    headers = request.headers
-    # check header here
-    if 'Authorization' not in headers:
-        return Response(json.dumps({"error": "missing auth"}), status=401,
-                        mimetype='application/json')
-    try:
-        content = request.get_json()
-        email = content['email']
-        fname = content['fname']
-        lname = content['lname']
-    except Exception:
-        return json.dumps({"message": "error reading arguments"})
-    url = db['name'] + '/' + db['endpoint'][3]
-    response = requests.put(
-        url,
-        params={"objtype": "user", "objkey": user_id},
-        json={"email": email, "fname": fname, "lname": lname})
-    return (response.json())
 
 
 @bp.route('/<playlist_id>', methods=['GET'])
@@ -102,6 +95,7 @@ def get_playlist(playlist_id):
 
 @bp.route('/', methods=['POST'])
 def create_playlist():
+    headers = request.headers
     try:
         content = request.get_json()
         name = content['name']
@@ -109,8 +103,9 @@ def create_playlist():
     except Exception:
         return json.dumps({"message": "error reading arguments"})
 
-    for song in songs:
+    for music_id in songs:
         # TODO: read songs
+        get_song(headers, music_id)
 
     payload = {"objtype": "playlist", "songs": songs}
     url = db['name'] + '/' + db['endpoint'][1]
