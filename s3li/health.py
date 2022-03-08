@@ -18,7 +18,7 @@ DEFAULT_AUTH = 'Bearer A'
 def parse_args():
     argp = argparse.ArgumentParser(
         's3',
-        description='Test s1/s3 connection'
+        description='Test s3 connection'
         )
     argp.add_argument(
         'name',
@@ -32,7 +32,7 @@ def parse_args():
     return argp.parse_args()
 
 def get_url(name, port):
-    return "http://{}:{}/api/v1/user/".format(name, port)
+    return "http://{}:{}/api/v1/playlist/".format(name, port)
 
 if __name__ == '__main__':
     args = parse_args()
