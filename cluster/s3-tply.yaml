@@ -29,7 +29,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: svc-s1
+  name: svc-s3
   labels:
     account: SVC_S3
 ---
