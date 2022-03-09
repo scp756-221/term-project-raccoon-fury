@@ -80,7 +80,7 @@ class PlaylistMcli(cmd.Cmd):
         args = parse_quoted_strings(arg)
         payload = {
             'PlaylistName': args[0],
-            'Songs': args[1]
+            'Songs': ','.join(args[1:])
         }
         print(payload)
         r = requests.post(
