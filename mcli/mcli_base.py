@@ -53,8 +53,7 @@ def parse_quoted_strings(arg):
     enough for simple use, parsing "-quoted names with apostrophes.
     """
     base_pattern = '''(\w+)|'([^']*)'|"([^"]*)"'''
-    new_pattern = '''(\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*)|(\w+)|'([^']*)'|"([^"]*)"'''
-    uuid_pattern = '([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})'
+    uuid_pattern = '([\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12})'
     mre = re.compile(rf'''{uuid_pattern}|{base_pattern}''')
     args = mre.findall(arg)
     return [''.join(a) for a in args]
