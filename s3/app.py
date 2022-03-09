@@ -40,6 +40,16 @@ db = {
 }
 
 
+def get_music(headers, music_id):
+    payload = {"objtype": "music", "objkey": music_id}
+    url = db['name'] + '/' + db['endpoint'][0]
+    response = requests.get(
+        url,
+        params=payload,
+        headers={'Authorization': headers['Authorization']})
+    return response.json()
+
+
 @bp.route('/', methods=['GET'])
 @metrics.do_not_track()
 def hello_world():
@@ -89,13 +99,8 @@ def create_playlist():
         return json.dumps({"message": "error reading arguments"})
 
     for music_id in Songs:
-        payload = {"objtype": "music", "objkey": music_id}
-        url = db['name'] + '/' + db['endpoint'][0]
-        response = requests.get(
-            url,
-            params=payload,
-            headers={'Authorization': headers['Authorization']})
-        if response.json()['Count'] == 0:
+        response = get_music(headers, music_id)
+        if response['Count'] == 0:
             return Response(json.dumps({"error": "get_song failed"}),
                             status=500,
                             mimetype='application/json')
@@ -117,10 +122,50 @@ def delete_playlist(playlist_id):
         return Response(json.dumps({"error": "missing auth"}),
                         status=401,
                         mimetype='application/json')
+    payload = {"objtype": "playlist", "objkey": playlist_id}
     url = db['name'] + '/' + db['endpoint'][2]
     response = requests.delete(
         url,
-        params={"objtype": "playlist", "objkey": playlist_id},
+        params=payload,
+        headers={'Authorization': headers['Authorization']})
+    return (response.json())
+
+
+@bp.route('/<playlist_id>/add/<music_id>', methods=['POST'])
+def add_song(playlist_id, music_id):
+    headers = request.headers
+    # check header here
+    if 'Authorization' not in headers:
+        return Response(json.dumps({"error": "missing auth"}),
+                        status=401,
+                        mimetype='application/json')
+    payload = {"objtype": "playlist", "objkey": playlist_id}
+    url = db['name'] + '/' + db['endpoint'][0]
+
+    pl_response_json = get_playlist(playlist_id)
+    if pl_response_json['Count'] == 0:
+        return Response(json.dumps({"error": "get_playlist failed"}),
+                        status=500,
+                        mimetype='application/json')
+
+    music_response_json = get_music(headers, music_id)
+    if music_response_json['Count'] == 0:
+        return Response(json.dumps({"error": "get_song failed"}),
+                        status=500,
+                        mimetype='application/json')
+
+    current_songs = pl_response_json['Items'][0]['Songs']
+    if music_id in current_songs:
+        return Response(json.dumps({"error": "music_id exists in playlist"}),
+                        status=500,
+                        mimetype='application/json')
+
+    current_songs.append(music_id)
+    url = db['name'] + '/' + db['endpoint'][3]
+    response = requests.put(
+        url,
+        params=payload,
+        json={"Songs": current_songs},
         headers={'Authorization': headers['Authorization']})
     return (response.json())
 
