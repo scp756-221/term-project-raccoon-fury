@@ -93,8 +93,8 @@ def create_playlist():
     headers = request.headers
     try:
         content = request.get_json()
-        Name = content['name']
-        Songs = content['songs'].strip().split(",")
+        PlaylistName = content['PlaylistName']
+        Songs = content['Songs'].strip().split(",")
     except Exception:
         return json.dumps({"message": "error reading arguments"})
 
@@ -105,7 +105,7 @@ def create_playlist():
                             status=500,
                             mimetype='application/json')
 
-    payload = {"objtype": "playlist", "Name": Name, "Songs": Songs}
+    payload = {"objtype": "playlist", "PlaylistName": PlaylistName, "Songs": Songs}
     url = db['name'] + '/' + db['endpoint'][1]
     response = requests.post(
         url,
