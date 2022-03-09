@@ -5,6 +5,7 @@ Simple command-line interface to all services
 # Submodules
 from mcli_base import *
 from mcli_music import *
+from mcli_playlist import *
 
 
 class Mcli(cmd.Cmd):
@@ -48,7 +49,8 @@ Enter 'help' for command list.
         Proceed with the playlist service.
         """
         self.svc = 'playlist'
-        # TODO
+        sub_cmd = PlaylistMcli(self)
+        self.dispatch(sub_cmd, arg)
         return
 
     def do_quit(self, arg):

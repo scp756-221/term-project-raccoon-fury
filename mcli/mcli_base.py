@@ -43,6 +43,9 @@ def parse_quoted_strings(arg):
     arguments, such as entries with mismatched quotes.  It's good
     enough for simple use, parsing "-quoted names with apostrophes.
     """
-    mre = re.compile(r'''(\w+)|'([^']*)'|"([^"]*)"''')
+    base_pattern = '''(\w+)|'([^']*)'|"([^"]*)"'''
+    new_pattern = '''(\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*)|(\w+)|'([^']*)'|"([^"]*)"'''
+    uuid_pattern = '([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})'
+    mre = re.compile(rf'''{uuid_pattern}|{base_pattern}''')
     args = mre.findall(arg)
     return [''.join(a) for a in args]
