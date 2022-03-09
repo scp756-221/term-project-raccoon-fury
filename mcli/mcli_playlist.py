@@ -28,7 +28,7 @@ class PlaylistMcli(cmd.Cmd):
         Examples
         --------
         read 91246583-ced8-4d70-8f5e-ce81419bb63c
-            Return "The Last Great American Dynasty".
+            Return content of the playlist.
         read
             Return all playlists (if the server supports this).
 
