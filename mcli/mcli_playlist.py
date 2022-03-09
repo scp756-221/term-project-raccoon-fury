@@ -70,7 +70,7 @@ class PlaylistMcli(cmd.Cmd):
 
         Examples
         --------
-        create 'My Test Playlist'  "91246583-ced8-4d70-8f5e-ce81419bb63c"
+        create 'My Test Playlist'  "74561cb6-bfc5-431c-8357-8a5b15318f30,d4999ccb-f7f7-41e0-aef0-8f332fad9276"
             Quote the apostrophe with double-quotes.
 
         create Soundtracks 91246583-ced8-4d70-8f5e-ce81419bb63c
@@ -82,7 +82,6 @@ class PlaylistMcli(cmd.Cmd):
             'PlaylistName': args[0],
             'Songs': ','.join(args[1:])
         }
-        print(payload)
         r = requests.post(
             url,
             json=payload,
@@ -107,6 +106,58 @@ class PlaylistMcli(cmd.Cmd):
         url = get_url(self.p_name, self.p_port, self.svc)
         r = requests.delete(
             url+arg.strip(),
+            headers={'Authorization': DEFAULT_AUTH}
+        )
+        if r.status_code != 200:
+            print("Non-successful status code:", r.status_code)
+
+    def do_append(self, arg):
+        """
+        Add a song to a playlist.
+
+        Parameters
+        ----------
+        playlist: playlist_id
+            The playlist_id of the playlist to update.
+        song: music_id
+            The song to be appended to the playlist.
+
+        Examples
+        --------
+        append 91246583-ced8-4d70-8f5e-ce81419bb63c 862a897c-0fa9-4a18-9a5b-77661528dde8
+            Add song "(Don’t Fear) The Reaper" to "My New Playlist".
+        """
+        url = get_url(self.p_name, self.p_port, self.svc)
+        args = parse_quoted_strings(arg)
+        r = requests.post(
+            url+f'{args[0]}/add',
+            json={'music_id': args[1]},
+            headers={'Authorization': DEFAULT_AUTH}
+        )
+        if r.status_code != 200:
+            print("Non-successful status code:", r.status_code)
+
+    def do_remove(self, arg):
+        """
+        Remove a song from a playlist.
+
+        Parameters
+        ----------
+        playlist: playlist_id
+            The playlist_id of the playlist to update.
+        song: music_id
+            The song to be removed from the playlist.
+
+        Examples
+        --------
+        append 91246583-ced8-4d70-8f5e-ce81419bb63c 862a897c-0fa9-4a18-9a5b-77661528dde8
+            Remove song "(Don’t Fear) The Reaper" from "My New Playlist".
+        """
+        url = get_url(self.p_name, self.p_port, self.svc)
+        args = parse_quoted_strings(arg)
+        r = requests.post(
+            url+f'{args[0]}/delete',
+            json={'music_id': args[1]},
             headers={'Authorization': DEFAULT_AUTH}
         )
         if r.status_code != 200:
