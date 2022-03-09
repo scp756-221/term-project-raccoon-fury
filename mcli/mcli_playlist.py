@@ -7,37 +7,39 @@ from mcli_base import *
 
 class PlaylistMcli(cmd.Cmd):
     def __init__(self, args):
-        self.name = args.name
-        self.port = args.port
+        self.m_name = args.m_name
+        self.m_port = args.m_port
+        self.p_name = args.p_name
+        self.p_port = args.p_port
         self.svc = args.svc
         cmd.Cmd.__init__(self)
         self.prompt = 'mql-playlist: '
 
     def do_read(self, arg):
         """
-        Read a single song or list all songs.
+        Read a playlist.
 
         Parameters
         ----------
-        song:  music_id (optional)
-            The music_id of the song to read. If not specified,
-            all songs are listed.
+        playlist:  playlist_id (optional)
+            The playlist_id of the playlist to read. If not specified,
+            all playlists are listed.
 
         Examples
         --------
-        read 6ecfafd0-8a35-4af6-a9e2-cbd79b3abeea
+        read 91246583-ced8-4d70-8f5e-ce81419bb63c
             Return "The Last Great American Dynasty".
         read
-            Return all songs (if the server supports this).
+            Return all playlists (if the server supports this).
 
         Notes
         -----
         Some versions of the server do not support listing
-        all songs and will instead return an empty list if
+        all playlists and will instead return an empty list if
         no parameter is provided.
         """
 
-        url = get_url(self.name, self.port, self.svc)
+        url = get_url(self.p_name, self.p_port, self.svc)
         r = requests.get(
             url+arg.strip(),
             headers={'Authorization': DEFAULT_AUTH}
@@ -51,9 +53,9 @@ class PlaylistMcli(cmd.Cmd):
         print("{} items returned".format(items['Count']))
         for i in items['Items']:
             print("{}  {:20.20s} {}".format(
-                i['music_id'],
-                i['Artist'],
-                i['SongTitle']))
+                i['playlist_id'],
+                i['PlaylistName'],
+                i['Songs']))
 
     def do_create(self, arg):
         """
@@ -61,22 +63,20 @@ class PlaylistMcli(cmd.Cmd):
 
         Parameters
         ----------
-        artist: string
-        title: string
+        name: string
+        songs: string
 
         Both parameters can be quoted by either single or double quotes.
 
         Examples
         --------
-        create 'Steely Dan'  "Everyone's Gone to the Movies"
+        create 'My Test Playlist'  "91246583-ced8-4d70-8f5e-ce81419bb63c"
             Quote the apostrophe with double-quotes.
 
-        create Chumbawamba Tubthumping
+        create Soundtracks 91246583-ced8-4d70-8f5e-ce81419bb63c
             No quotes needed for single-word artist or title name.
         """
-        url = get_url(self.name, self.port, self.svc)
-        # print(parse_quoted_strings(arg))
-        # return
+        url = get_url(self.p_name, self.p_port, self.svc)
         args = parse_quoted_strings(arg)
         payload = {
             'PlaylistName': args[0],
@@ -88,24 +88,23 @@ class PlaylistMcli(cmd.Cmd):
             json=payload,
             headers={'Authorization': DEFAULT_AUTH}
         )
-        print(r)
-        # print(r.json())
+        print(r.json())
 
     def do_delete(self, arg):
         """
-        Delete a song.
+        Delete a playlist.
 
         Parameters
         ----------
-        song: music_id
-            The music_id of the song to delete.
+        playlist: playlist_id
+            The playlist_id of the playlist to delete.
 
         Examples
         --------
-        delete 6ecfafd0-8a35-4af6-a9e2-cbd79b3abeea
-            Delete "The Last Great American Dynasty".
+        delete 91246583-ced8-4d70-8f5e-ce81419bb63c
+            Delete "My New Playlist".
         """
-        url = get_url(self.name, self.port, self.svc)
+        url = get_url(self.p_name, self.p_port, self.svc)
         r = requests.delete(
             url+arg.strip(),
             headers={'Authorization': DEFAULT_AUTH}
@@ -121,9 +120,9 @@ class PlaylistMcli(cmd.Cmd):
 
     def do_test(self, arg):
         """
-        Run a test stub on the music server.
+        Run a test stub on the playlist server.
         """
-        url = get_url(self.name, self.port, self.svc)
+        url = get_url(self.p_name, self.p_port, self.svc)
         r = requests.get(
             url+'test',
             headers={'Authorization': DEFAULT_AUTH}

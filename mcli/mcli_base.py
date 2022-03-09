@@ -25,13 +25,22 @@ def parse_args():
         description='Command-line query interface to music service'
     )
     argp.add_argument(
-        'name',
+        'm_name',
         help="DNS name or IP address of music server"
     )
     argp.add_argument(
-        'port',
+        'm_port',
         type=int,
         help="Port number of music server"
+    )
+    argp.add_argument(
+        'p_name',
+        help="DNS name or IP address of playlist server"
+    )
+    argp.add_argument(
+        'p_port',
+        type=int,
+        help="Port number of playlist server"
     )
     return argp.parse_args()
 

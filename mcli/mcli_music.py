@@ -7,8 +7,10 @@ from mcli_base import *
 
 class MusicMcli(cmd.Cmd):
     def __init__(self, args):
-        self.name = args.name
-        self.port = args.port
+        self.m_name = args.m_name
+        self.m_port = args.m_port
+        self.p_name = args.p_name
+        self.p_port = args.p_port
         self.svc = args.svc
         cmd.Cmd.__init__(self)
         self.prompt = 'mql-music: '
@@ -37,7 +39,7 @@ class MusicMcli(cmd.Cmd):
         no parameter is provided.
         """
 
-        url = get_url(self.name, self.port, self.svc)
+        url = get_url(self.m_name, self.m_port, self.svc)
         r = requests.get(
             url+arg.strip(),
             headers={'Authorization': DEFAULT_AUTH}
@@ -74,7 +76,7 @@ class MusicMcli(cmd.Cmd):
         create Chumbawamba Tubthumping
             No quotes needed for single-word artist or title name.
         """
-        url = get_url(self.name, self.port, self.svc)
+        url = get_url(self.m_name, self.m_port, self.svc)
         args = parse_quoted_strings(arg)
         payload = {
             'Artist': args[0],
@@ -101,7 +103,7 @@ class MusicMcli(cmd.Cmd):
         delete 6ecfafd0-8a35-4af6-a9e2-cbd79b3abeea
             Delete "The Last Great American Dynasty".
         """
-        url = get_url(self.name, self.port, self.svc)
+        url = get_url(self.m_name, self.m_port, self.svc)
         r = requests.delete(
             url+arg.strip(),
             headers={'Authorization': DEFAULT_AUTH}
@@ -119,7 +121,7 @@ class MusicMcli(cmd.Cmd):
         """
         Run a test stub on the music server.
         """
-        url = get_url(self.name, self.port, self.svc)
+        url = get_url(self.m_name, self.m_port, self.svc)
         r = requests.get(
             url+'test',
             headers={'Authorization': DEFAULT_AUTH}
@@ -131,7 +133,7 @@ class MusicMcli(cmd.Cmd):
         """
         Tell the music cerver to shut down.
         """
-        url = get_url(self.name, self.port, self.svc)
+        url = get_url(self.m_name, self.m_port, self.svc)
         r = requests.get(
             url+'shutdown',
             headers={'Authorization': DEFAULT_AUTH}

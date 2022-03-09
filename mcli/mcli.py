@@ -10,8 +10,10 @@ from mcli_playlist import *
 
 class Mcli(cmd.Cmd):
     def __init__(self, args):
-        self.name = args.name
-        self.port = args.port
+        self.m_name = args.m_name
+        self.m_port = args.m_port
+        self.p_name = args.p_name
+        self.p_port = args.p_port
         cmd.Cmd.__init__(self)
         self.prompt = 'mql: '
         self.intro = """
