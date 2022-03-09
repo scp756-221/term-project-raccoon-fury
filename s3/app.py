@@ -131,14 +131,20 @@ def delete_playlist(playlist_id):
     return (response.json())
 
 
-@bp.route('/<playlist_id>/add/<music_id>', methods=['POST'])
-def add_song(playlist_id, music_id):
+@bp.route('/<playlist_id>/add', methods=['POST'])
+def add_song(playlist_id):
     headers = request.headers
     # check header here
     if 'Authorization' not in headers:
         return Response(json.dumps({"error": "missing auth"}),
                         status=401,
                         mimetype='application/json')
+    try:
+        content = request.get_json()
+        music_id = content['music_id']
+    except Exception:
+        return json.dumps({"message": "error reading arguments"})
+
     payload = {"objtype": "playlist", "objkey": playlist_id}
     url = db['name'] + '/' + db['endpoint'][0]
 
@@ -170,14 +176,20 @@ def add_song(playlist_id, music_id):
     return (response.json())
 
 
-@bp.route('/<playlist_id>/delete/<music_id>', methods=['POST'])
-def delete_song(playlist_id, music_id):
+@bp.route('/<playlist_id>/delete', methods=['POST'])
+def delete_song(playlist_id):
     headers = request.headers
     # check header here
     if 'Authorization' not in headers:
         return Response(json.dumps({"error": "missing auth"}),
                         status=401,
                         mimetype='application/json')
+    try:
+        content = request.get_json()
+        music_id = content['music_id']
+    except Exception:
+        return json.dumps({"message": "error reading arguments"})
+
     payload = {"objtype": "playlist", "objkey": playlist_id}
     url = db['name'] + '/' + db['endpoint'][0]
 
