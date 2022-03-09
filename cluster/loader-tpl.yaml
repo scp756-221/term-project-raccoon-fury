@@ -34,6 +34,9 @@ spec:
         - name: users
           mountPath: "/data/users"
           readOnly: true
+        - name: playlist
+          mountPath: "/data/playlist"
+          readOnly: true
       volumes:
       - name: music
         configMap:
@@ -41,5 +44,8 @@ spec:
       - name: users
         configMap:
           name: users
+      - name: playlist
+        configMap:
+          name: playlist
       restartPolicy: Never
   backoffLimit: 0
