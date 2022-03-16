@@ -27,7 +27,7 @@ metadata:
     app: cmpt756s3
 spec:
   ports:
-  - port: 30002
+  - port: 30003
     name: http
   selector:
     app: cmpt756s3
@@ -65,4 +65,4 @@ spec:
         image: 'ZZ-CR-ID/ZZ-REG-ID/cmpt756s3:latest'
         imagePullPolicy: Always
         ports:
-        - containerPort: 30002
+        - containerPort: 30003
