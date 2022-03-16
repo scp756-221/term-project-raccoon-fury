@@ -1,4 +1,4 @@
-name: CI test of v1.1 music 
+name: CI test of v1.1 music
 
 on:
   push:
@@ -6,6 +6,7 @@ on:
       - db/*
       - s1/*
       - s2/v1.1/*
+      - s3/*
       - ci/v1.1/*
       - .github/workflows/ci-system-v1.1.yaml
 

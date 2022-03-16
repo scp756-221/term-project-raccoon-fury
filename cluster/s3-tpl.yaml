@@ -21,7 +21,7 @@ metadata:
     app: cmpt756s3
 spec:
   ports:
-  - port: 30002
+  - port: 30003
     name: http
   selector:
     app: cmpt756s3
@@ -59,18 +59,18 @@ spec:
         image: 'ZZ-CR-ID/ZZ-REG-ID/cmpt756s3:v1'
         imagePullPolicy: Always
         ports:
-        - containerPort: 30002
+        - containerPort: 30003
         livenessProbe:
           httpGet:
             path: /api/v1/playlist/health
-            port: 30002
+            port: 30003
           initialDelaySeconds: 10
           periodSeconds: 5
           failureThreshold: 5
         readinessProbe:
           httpGet:
             path: /api/v1/playlist/readiness
-            port: 30002
+            port: 30003
           initialDelaySeconds: 10
           periodSeconds: 5
           timeoutSeconds: 2

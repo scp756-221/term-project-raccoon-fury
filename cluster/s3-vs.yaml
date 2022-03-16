@@ -20,4 +20,4 @@ spec:
     - destination:
         host: cmpt756s3
         port:
-          number: 30002
+          number: 30003

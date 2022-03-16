@@ -43,13 +43,23 @@ services:
     container_name: cmpt756s2
     ports:
      - "30001:30001"
+  cmpt756s3:
+    depends_on:
+      - dynamodb-local
+      - cmpt756db
+    build: ../s3
+    image: ci_s3
+    container_name: cmpt756s3
+    ports:
+     - "30003:30003"
   test:
-    command: "pytest --user_address cmpt756s1 --user_port 30000 --music_address cmpt756s2 --music_port 30001 --table_suffix ZZ-REG-ID"
+    command: "pytest --user_address cmpt756s1 --user_port 30000 --music_address cmpt756s2 --music_port 30001 --playlist_address cmpt756s3 --playlist_port 30003 --table_suffix ZZ-REG-ID"
     depends_on:
       - dynamodb-local
       - cmpt756db
       - cmpt756s1
       - cmpt756s2
+      - cmpt756s3
     build: ./v1.1
     image: ci_test
     container_name: test
