@@ -55,3 +55,12 @@ Term Project repo
 ```
 
 Testing URL: `http://<PUBLIC_IP>/api/v1/playlist/health`
+
+### Run CI test locally
+```
+# update ci/v1.1/compose.yaml
+$ make -f k8s-tpl.mak templates
+
+/home/k8s# cd ci
+/home/k8s# ./runci-local.sh v1.1
+```
