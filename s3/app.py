@@ -6,7 +6,7 @@ Sample application---playlist service.
 # Standard library modules
 import logging
 import sys
-import time
+
 
 # Installed packages
 from flask import Blueprint
@@ -105,7 +105,9 @@ def create_playlist():
                             status=500,
                             mimetype='application/json')
 
-    payload = {"objtype": "playlist", "PlaylistName": PlaylistName, "Songs": Songs}
+    payload = {"objtype": "playlist",
+               "PlaylistName": PlaylistName,
+               "Songs": Songs}
     url = db['name'] + '/' + db['endpoint'][1]
     response = requests.post(
         url,
@@ -207,9 +209,10 @@ def delete_song(playlist_id):
 
     current_songs = pl_response_json['Items'][0]['Songs']
     if music_id not in current_songs:
-        return Response(json.dumps({"error": "music_id does not exist in playlist"}),
-                        status=500,
-                        mimetype='application/json')
+        return Response(
+            json.dumps({"error": "music_id does not exist in playlist"}),
+            status=500,
+            mimetype='application/json')
 
     current_songs.remove(music_id)
     url = db['name'] + '/' + db['endpoint'][3]
