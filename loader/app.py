@@ -66,7 +66,7 @@ def create_song(artist, title, uuid):
               "uuid": uuid})
     return (response.json())
 
-def create_playlist(name, songs, uuid):
+def create_playlist(playlistname, songs, uuid):
     """
     Create a playlist.
     If a record already exists with the same playlist_name and title,
@@ -77,7 +77,7 @@ def create_playlist(name, songs, uuid):
         url,
         auth=build_auth(),
         json={"objtype": "playlist",
-              "Name": name,
+              "PlaylistName": playlistname,
               "Songs": songs,
               "uuid": uuid})
     return (response.json())
@@ -127,13 +127,13 @@ if __name__ == '__main__':
     with open('{}/playlist/playlist.csv'.format(resource_dir), 'r') as inp:
         rdr = csv.reader(inp)
         next(rdr)  # Skip header
-        for name, songs, uuid in rdr:
+        for playlistname, songs, uuid in rdr:
             songList = songs.strip().split(",")
-            resp = create_playlist(name.strip(),
+            resp = create_playlist(playlistname.strip(),
                                songList,
                                uuid.strip())
             resp = check_resp(resp, 'playlist_id')
             if resp is None or resp != uuid:
-                print('Error creating song {} {}, {}'.format(artist,
-                                                             title,
+                print('Error creating song {} {}, {}'.format(playlistname,
+                                                             songList,
                                                              uuid))
