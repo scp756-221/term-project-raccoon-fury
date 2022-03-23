@@ -3,6 +3,11 @@
 #
 # Istio yaml to deploy a VirtualService
 #
+# This version demonstrates a simple "canary" deployment.
+# It assumes that two versions of service S2 have
+# been deployed, v1 and v2. It uses the Istio traffic-shaping
+# features to split the traffic 90% to v1 and 10% to v2
+#
 # DestinationRule lists the subset destination Kubernetes Services
 # that will receive traffic from the Istio VirtualService.
 # VirtualService routes URLs to the destinations, splitting the traffic
@@ -18,6 +23,9 @@ spec:
   - name: v1
     labels:
       version: v1
+  - name: v2
+    labels:
+      version: v2
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -38,10 +46,11 @@ spec:
     rewrite:
       uri: /api/v1/music
     route:
-    - weight: 100
-      destination:
+    - destination:
         host: cmpt756s2
-        port:
-          number: 30001
         subset: v1
-      
+      weight: 0
+    - destination:
+        host: cmpt756s2
+        subset: v2
+      weight: 100
