@@ -26,6 +26,16 @@ spec:
   - name: v2
     labels:
       version: v2
+  trafficPolicy:
+    connectionPool:
+      http:
+        http1MaxPendingRequests: 1000
+        maxRequestsPerConnection: 1000
+    outlierDetection:
+      consecutive5xxErrors: 6
+      interval: 30s
+      baseEjectionTime: 1m
+      maxEjectionPercent: 100
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService

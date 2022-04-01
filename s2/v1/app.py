@@ -138,6 +138,12 @@ def test_retry():
     # test retry 
     return Response("", status=502, mimetype="application/json")
 
+@bp.route('/test/break', methods=['GET'])
+def test_circuit_break():
+    return Response("",
+                    status=500,
+                    mimetype='application/json')
+
 
 # All database calls will have this prefix.  Prometheus metric
 # calls will not---they will have route '/metrics'.  This is
