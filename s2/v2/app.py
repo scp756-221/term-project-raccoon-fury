@@ -127,6 +127,12 @@ def delete_song(music_id):
         headers={'Authorization': headers['Authorization']})
     return (response.json())
 
+@bp.route('/test/break', methods=['GET'])
+def test_circuit_break():
+    return Response("",
+                    status=500,
+                    mimetype='application/json')
+
 
 # All database calls will have this prefix.  Prometheus metric
 # calls will not---they will have route '/metrics'.  This is
