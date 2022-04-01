@@ -7,6 +7,7 @@ Sample application---music service.
 import logging
 import os
 import sys
+import time
 
 # Installed packages
 from flask import Blueprint
@@ -131,6 +132,11 @@ def test():
             ucode):
         raise Exception("Test failed")
     return {}
+
+@bp.route('/test/retry', methods=['GET'])
+def test_retry():
+    # test retry 
+    return Response("", status=502, mimetype="application/json")
 
 
 # All database calls will have this prefix.  Prometheus metric
