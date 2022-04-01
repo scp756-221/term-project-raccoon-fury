@@ -49,8 +49,11 @@ spec:
     - destination:
         host: cmpt756s2
         subset: v1
-      weight: 0
+      weight: 100
     - destination:
         host: cmpt756s2
         subset: v2
-      weight: 100
+      weight: 0
+    retries:
+      attempts: 3
+      retryOn: gateway-error
