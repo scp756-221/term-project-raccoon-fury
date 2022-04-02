@@ -23,6 +23,10 @@ import simplejson as json
 
 # The application
 
+# Integer value 0 <= v < 100, denoting proportion of
+# calls to `get_song` to return 500 from
+PERCENT_ERROR = 0
+
 app = Flask(__name__)
 
 metrics = PrometheusMetrics(app)
@@ -170,6 +174,13 @@ def write_orig_artist(music_id):
         json={'OrigArtist': orig_artist},
         headers={'Authorization': headers['Authorization']})
     return (response.json())
+
+
+@bp.route('/test/break', methods=['GET'])
+def test_circuit_break():
+    return Response("",
+                    status=500,
+                    mimetype='application/json')
 
 
 # All database calls will have this prefix.  Prometheus metric
