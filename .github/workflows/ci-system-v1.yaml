@@ -1,14 +1,14 @@
-name: CI test of v1.1 music
+name: CI test of v1
 
 on:
   push:
     paths:
       - db/*
       - s1/*
-      - s2/v1.1/*
+      - s2/v1/*
       - s3/*
-      - ci/v1.1/*
-      - .github/workflows/ci-system-v1.1.yaml
+      - ci/v1/*
+      - .github/workflows/ci-system-v1.yaml
 
 jobs:
   build:
@@ -45,4 +45,4 @@ jobs:
       - name: Run CI test
         run: |
           cd ci
-          COMPOSE_PATH=../tools/docker-compose-v2 ./runci.sh v1.1
+          COMPOSE_PATH=../tools/docker-compose-v2 ./runci.sh v1
