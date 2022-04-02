@@ -5,9 +5,7 @@ Sample application---music service.
 
 # Standard library modules
 import logging
-import os
 import sys
-import time
 
 # Installed packages
 from flask import Blueprint
@@ -22,11 +20,6 @@ import requests
 import simplejson as json
 
 # Local modules
-import unique_code
-
-# The unique exercise code
-# The EXER environment variable has a value specific to this exercise
-ucode = unique_code.exercise_hash(os.getenv('EXER'))
 
 # The application
 
@@ -40,7 +33,8 @@ db = {
     "endpoint": [
         "read",
         "write",
-        "delete"
+        "delete",
+        "update"
     ]
 }
 bp = Blueprint('app', __name__)
@@ -99,12 +93,16 @@ def create_song():
         content = request.get_json()
         Artist = content['Artist']
         SongTitle = content['SongTitle']
+        OrigArtist = content['OrigArtist'] if 'OrigArtist' in content else None
     except Exception:
         return json.dumps({"message": "error reading arguments"})
     url = db['name'] + '/' + db['endpoint'][1]
+    payload = {"objtype": "music", "Artist": Artist, "SongTitle": SongTitle}
+    if OrigArtist is not None:
+        payload['OrigArtist'] = OrigArtist
     response = requests.post(
         url,
-        json={"objtype": "music", "Artist": Artist, "SongTitle": SongTitle},
+        json=payload,
         headers={'Authorization': headers['Authorization']})
     return (response.json())
 
@@ -125,18 +123,65 @@ def delete_song(music_id):
     return (response.json())
 
 
+@bp.route('/read_orig_artist/<music_id>', methods=['GET'])
+def read_orig_artist(music_id):
+    headers = request.headers
+    # check header here
+    if 'Authorization' not in headers:
+        return Response(json.dumps({"error": "missing auth"}),
+                        status=401,
+                        mimetype='application/json')
+    payload = {"objtype": "music", "objkey": music_id}
+    url = db['name'] + '/' + db['endpoint'][0]
+    response = requests.get(
+        url,
+        params=payload,
+        headers={'Authorization': headers['Authorization']})
+    if response.status_code != 200:
+        response = {
+            "Count": 0,
+            "Items": []
+        }
+        return app.make_response((response, 404))
+    item = response.json()['Items'][0]
+    oa = (item['OrigArtist'] if 'OrigArtist' in item
+          else None)
+    return {'OrigArtist': oa}
+
+
+@bp.route('/write_orig_artist/<music_id>', methods=['PUT'])
+def write_orig_artist(music_id):
+    headers = request.headers
+    # check header here
+    if 'Authorization' not in headers:
+        return Response(json.dumps({"error": "missing auth"}),
+                        status=401,
+                        mimetype='application/json')
+    try:
+        content = request.get_json()
+        orig_artist = content['OrigArtist']
+    except Exception:
+        return json.dumps({"message": "error reading arguments"})
+    payload = {"objtype": "music", "objkey": music_id}
+    url = db['name'] + '/' + db['endpoint'][3]
+    response = requests.put(
+        url,
+        params=payload,
+        json={'OrigArtist': orig_artist},
+        headers={'Authorization': headers['Authorization']})
+    return (response.json())
+
+
 @bp.route('/test', methods=['GET'])
 def test():
-    # This value is for user scp756-221
-    if ('f5ecd8c07b2b778cd5734790a3677ded50ab81445afe1488ac14fbc18e28a0ed' !=
-            ucode):
-        raise Exception("Test failed")
     return {}
+
 
 @bp.route('/test/retry', methods=['GET'])
 def test_retry():
-    # test retry 
+    # test retry
     return Response("", status=502, mimetype="application/json")
+
 
 @bp.route('/test/break', methods=['GET'])
 def test_circuit_break():
@@ -155,7 +200,6 @@ if __name__ == '__main__':
         logging.error("missing port arg 1")
         sys.exit(-1)
 
-    app.logger.error("Unique code: {}".format(ucode))
     p = int(sys.argv[1])
     # Do not set debug=True---that will disable the Prometheus metrics
     app.run(host='0.0.0.0', port=p, threaded=True)
