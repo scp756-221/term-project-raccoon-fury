@@ -19,8 +19,6 @@ import requests
 
 import simplejson as json
 
-# Local modules
-
 # The application
 
 app = Flask(__name__)
