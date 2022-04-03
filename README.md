@@ -64,3 +64,30 @@ $ make -f k8s-tpl.mak templates
 /home/k8s# cd ci
 /home/k8s# ./runci-local.sh v1
 ```
+
+### Step to create K8S autoscaler
+```
+##optional## kubectl delete -n kube-system deployments.apps metrics-server
+kubectl apply -f metrics-server.yaml
+
+kubectl set resources deployment cmpt756s1 -c=cmpt756s1 --limits=cpu=100m,memory=64Mi
+kubectl set resources deployment cmpt756s2-v2 -c=cmpt756s2 --limits=cpu=100m,memory=64Mi
+kubectl set resources deployment cmpt756db -c=cmpt756db --limits=cpu=100m,memory=64Mi
+
+make -f k8s.mak s1 db
+tools/s2ver.sh v2
+
+kubectl autoscale deployment cmpt756s1 --min=2 --max=100
+kubectl autoscale deployment cmpt756s2-v2 --min=2 --max=100
+kubectl autoscale deployment cmpt756db --min=2 --max=100
+```
+
+#### View autoscaler
+```
+kubectl get hpa
+```
+
+#### Delete autoscaler
+```
+kubectl delete hpa cmpt756s1 cmpt756s2-v2 cmpt756db
+```
