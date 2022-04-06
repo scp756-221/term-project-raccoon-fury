@@ -48,6 +48,8 @@ loader_token = os.getenv('SVC_LOADER_TOKEN')
 # In some testing contexts, we pass in the DynamoDB URL
 dynamodb_url = os.getenv('DYNAMODB_URL', '')
 
+dbCache = {}
+
 if dynamodb_url == '':
     dynamodb = boto3.resource(
         'dynamodb',
@@ -99,9 +101,19 @@ def read():
     objkey = urllib.parse.unquote_plus(request.args.get('objkey'))
     table_name = objtype.capitalize()+"-ZZ-REG-ID"
     table_id = objtype + "_id"
+
+    cache_key = table_name + "|" + objkey
+
+    if ( cache_key in dbCache):
+        print("return cached record: " + cache_key, file=sys.stdout)
+        return dbCache[cache_key]
+    
     table = dynamodb.Table(table_name)
     response = table.query(Select='ALL_ATTRIBUTES',
                            KeyConditionExpression=Key(table_id).eq(objkey))
+
+    dbCache[cache_key] = response
+
     return response
 
 
