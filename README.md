@@ -20,7 +20,6 @@ Below is the top-level folder structure of this repo.
 ├── s1
 ├── s2
 ├── s3
-├── s3li
 └── tools
 ```
 
@@ -34,7 +33,6 @@ Below is the top-level folder structure of this repo.
 - `s1`: the user service
 - `s2`: the music service
 - `s3`: the playlist service
-- `s3li`: ::TODO::
 - `tools`: convenient scripts to quick start the services
 
 ## Prerequisites

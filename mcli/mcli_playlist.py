@@ -1,5 +1,5 @@
 """
-Simple command-line interface to music service
+Simple command-line interface to playlist service
 """
 
 from mcli_base import *
@@ -41,7 +41,7 @@ class PlaylistMcli(cmd.Cmd):
 
         url = get_url(self.p_name, self.p_port, self.svc)
         r = requests.get(
-            url+arg.strip(),
+            url + arg.strip(),
             headers={'Authorization': DEFAULT_AUTH}
         )
         if r.status_code != 200:
@@ -105,7 +105,7 @@ class PlaylistMcli(cmd.Cmd):
         """
         url = get_url(self.p_name, self.p_port, self.svc)
         r = requests.delete(
-            url+arg.strip(),
+            url + arg.strip(),
             headers={'Authorization': DEFAULT_AUTH}
         )
         if r.status_code != 200:
@@ -130,7 +130,7 @@ class PlaylistMcli(cmd.Cmd):
         url = get_url(self.p_name, self.p_port, self.svc)
         args = parse_quoted_strings(arg)
         r = requests.post(
-            url+f'{args[0]}/add',
+            url + f'{args[0]}/add',
             json={'music_id': args[1]},
             headers={'Authorization': DEFAULT_AUTH}
         )
@@ -156,7 +156,7 @@ class PlaylistMcli(cmd.Cmd):
         url = get_url(self.p_name, self.p_port, self.svc)
         args = parse_quoted_strings(arg)
         r = requests.post(
-            url+f'{args[0]}/delete',
+            url + f'{args[0]}/delete',
             json={'music_id': args[1]},
             headers={'Authorization': DEFAULT_AUTH}
         )
@@ -175,7 +175,7 @@ class PlaylistMcli(cmd.Cmd):
         """
         url = get_url(self.p_name, self.p_port, self.svc)
         r = requests.get(
-            url+'test',
+            url + 'test',
             headers={'Authorization': DEFAULT_AUTH}
         )
         if r.status_code != 200:
